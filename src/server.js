@@ -2,24 +2,21 @@
 import express from 'express'
 import { CONNECT_DB, CLOSE_DB } from './config/mongodb'
 import { env } from './config/environment'
+import { APIs_V1 } from '~/routes/v1'
 
 const START_SERVER = () => {
   const app = express()
+  app.use(express.json())
 
   const localhost = env.APP_HOST
   const port = env.APP_PORT
 
-  app.get('/', async (req, res) => {
-    res.end('<h1>Hello World!</h1><hr>')
-  })
+  app.use('/v1', APIs_V1)
 
   app.listen(port, localhost, () => {
     console.log(`3. Hello Dung Nguyen Dev, I am running at http://localhost:${port}/`)
   })
 
-  // ON_DEATH(() => {
-  //   console.log('exit')
-  // })
   process.stdin.resume() // so the program will not close instantly
 
   function exitHandler() {
@@ -29,14 +26,11 @@ const START_SERVER = () => {
 
   // do something when app is closing
   process.on('exit', exitHandler.bind(null, { cleanup: true }))
-
   // catches ctrl+c event
   process.on('SIGINT', exitHandler.bind(null, { exit: true }))
-
   // catches "kill pid" (for example: nodemon restart)
   process.on('SIGUSR1', exitHandler.bind(null, { exit: true }))
   process.on('SIGUSR2', exitHandler.bind(null, { exit: true }))
-
   // catches uncaught exceptions
   process.on('uncaughtException', exitHandler.bind(null, { exit: true }))
 }
