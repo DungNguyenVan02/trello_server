@@ -3,6 +3,7 @@ import express from 'express'
 import { CONNECT_DB, CLOSE_DB } from './config/mongodb'
 import { env } from './config/environment'
 import { APIs_V1 } from '~/routes/v1'
+import { errorHandlingMiddleware } from './middlewares/errorHandlingMiddleware'
 
 const START_SERVER = () => {
   const app = express()
@@ -12,6 +13,8 @@ const START_SERVER = () => {
   const port = env.APP_PORT
 
   app.use('/v1', APIs_V1)
+
+  app.use(errorHandlingMiddleware)
 
   app.listen(port, localhost, () => {
     console.log(`3. Hello Dung Nguyen Dev, I am running at http://localhost:${port}/`)
