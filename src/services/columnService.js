@@ -1,6 +1,9 @@
 /* eslint-disable no-useless-catch */
 import { columnModel } from '~/models/columnModel'
 import { boardModel } from '~/models/boardModel'
+import { cardModel } from '~/models/cardModel'
+import ApiError from '~/utils/ApiError'
+import { StatusCodes } from 'http-status-codes'
 
 const createNew = async (reqBody) => {
   try {
@@ -31,10 +34,17 @@ const update = async (id, data) => {
 
 const softDelete = async (id) => {
   try {
+    const targetColumn = await columnModel.findOneById(id)
+
+    if (!targetColumn) {
+      throw new ApiError(StatusCodes.NOT_FOUND, 'Column not found!')
+    }
     // Xóa mềm columns => _destroy = true
     await columnModel.softDeleteColumnById(id)
-
-    // await boardModel.softDeleteColumnById(id)
+    // Cập nhật lại columnOrderIDs
+    await boardModel.pullColumnById(targetColumn)
+    // Xóa mềm tất cả cards trong column
+    await cardModel.softDeleteColumnById(id)
     return { deleteMes: 'Column and its Cards deleted successfully!' }
   } catch (error) {
     throw error

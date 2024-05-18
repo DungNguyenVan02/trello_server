@@ -138,23 +138,21 @@ const update = async (id, dataUpdate) => {
   }
 }
 
-// const softDeleteColumnById = async (id, dataUpdate) => {
-//   try {
-//     const result = await GET_DB()
-//       .collection(BOARD_COLLECTION_NAME)
-//       .findOneAndUpdate(
-//         {
-//           _id: new ObjectId(id)
-//         },
-//         { $set: dataUpdate },
-//         { returnDocument: 'after' }
-//       )
+const pullColumnById = async (column) => {
+  try {
+    const result = await GET_DB()
+      .collection(BOARD_COLLECTION_NAME)
+      .findOneAndUpdate(
+        { _id: new ObjectId(column.boardId) },
+        { $pull: { columnOrderIds: new ObjectId(column._id) } },
+        { returnDocument: 'after' }
+      )
 
-//     return result
-//   } catch (error) {
-//     throw new Error(error)
-//   }
-// }
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
 
 export const boardModel = {
   BOARD_COLLECTION_NAME,
@@ -163,6 +161,6 @@ export const boardModel = {
   findOneById,
   getDetails,
   pushColumnOrderIds,
-  update
-  // softDeleteColumnById
+  update,
+  pullColumnById
 }
