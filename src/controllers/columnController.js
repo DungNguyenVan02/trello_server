@@ -20,4 +20,14 @@ const update = async (req, res, next) => {
   }
 }
 
-export const columnController = { createNew, update }
+const softDelete = async (req, res, next) => {
+  try {
+    const { id } = req.params
+    const result = await columnService.softDelete(id)
+    return res.status(StatusCodes.OK).json(result)
+  } catch (error) {
+    next(error)
+  }
+}
+
+export const columnController = { createNew, update, softDelete }
