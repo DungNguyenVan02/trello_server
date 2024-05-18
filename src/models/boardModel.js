@@ -60,6 +60,13 @@ const getDetails = async (id) => {
         {
           $lookup: {
             from: columnModel.COLUMN_COLLECTION_NAME,
+            pipeline: [
+              {
+                $match: {
+                  _destroy: false
+                }
+              }
+            ],
             localField: '_id',
             foreignField: 'boardId',
             as: 'columns'
@@ -131,6 +138,24 @@ const update = async (id, dataUpdate) => {
   }
 }
 
+// const softDeleteColumnById = async (id, dataUpdate) => {
+//   try {
+//     const result = await GET_DB()
+//       .collection(BOARD_COLLECTION_NAME)
+//       .findOneAndUpdate(
+//         {
+//           _id: new ObjectId(id)
+//         },
+//         { $set: dataUpdate },
+//         { returnDocument: 'after' }
+//       )
+
+//     return result
+//   } catch (error) {
+//     throw new Error(error)
+//   }
+// }
+
 export const boardModel = {
   BOARD_COLLECTION_NAME,
   BOARD_COLLECTION_SCHEMA,
@@ -139,4 +164,5 @@ export const boardModel = {
   getDetails,
   pushColumnOrderIds,
   update
+  // softDeleteColumnById
 }

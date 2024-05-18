@@ -93,11 +93,29 @@ const update = async (id, dataUpdate) => {
   }
 }
 
+const softDeleteColumnById = async (id) => {
+  try {
+    const result = await GET_DB()
+      .collection(COLUMN_COLLECTION_NAME)
+      .findOneAndUpdate(
+        {
+          _id: new ObjectId(id)
+        },
+        { $set: { _destroy: true } },
+        { returnDocument: 'after' }
+      )
+    return result
+  } catch (error) {
+    throw new Error(error)
+  }
+}
+
 export const columnModel = {
   COLUMN_COLLECTION_NAME,
   COLUMN_COLLECTION_SCHEMA,
   createNew,
   findOneById,
   pushCardOrderIds,
-  update
+  update,
+  softDeleteColumnById
 }

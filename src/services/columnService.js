@@ -29,7 +29,20 @@ const update = async (id, data) => {
   }
 }
 
+const softDelete = async (id) => {
+  try {
+    // Xóa mềm columns => _destroy = true
+    await columnModel.softDeleteColumnById(id)
+
+    // await boardModel.softDeleteColumnById(id)
+    return { deleteMes: 'Column and its Cards deleted successfully!' }
+  } catch (error) {
+    throw error
+  }
+}
+
 export const columnService = {
   createNew,
-  update
+  update,
+  softDelete
 }

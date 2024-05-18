@@ -33,7 +33,22 @@ const update = async (req, res, next) => {
   }
 }
 
+const softDelete = async (req, res, next) => {
+  const correctCondition = Joi.object({
+    id: Joi.string().required().pattern(OBJECT_ID_RULE).message(OBJECT_ID_RULE_MESSAGE)
+  })
+
+  try {
+    // abortEarly set về false sẽ chả về tất cả các lỗi thay vì chỉ 1 lỗi đầu tiên
+    await correctCondition.validateAsync(req.params)
+    next()
+  } catch (error) {
+    next(new ApiError(StatusCodes.UNPROCESSABLE_ENTITY, new Error(error).message))
+  }
+}
+
 export const columnValidation = {
   createNew,
-  update
+  update,
+  softDelete
 }
